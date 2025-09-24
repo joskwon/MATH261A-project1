@@ -1,11 +1,11 @@
 ---
-title: "Title"
-subtitle: "Subtitle"
-author: "Your Name"
+title: "Offense Pass Completion as a Predictor of NFL Score Differential"
+subtitle: "A comparision betweeen "
+author: "Joshua Kwon"
 thanks: "Project repository available at: [https://github.com/peteragao/MATH261A-project-template](https://github.com/peteragao/MATH261A-project-template)."
-date: today
+date: 9/24/25
 date-format: long
-abstract: "Abstract here."
+abstract: "Measuring the importance of an NFL team's offense by"
 format: pdf
 bibliography: references.bib
 ---
