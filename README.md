@@ -7,7 +7,7 @@ Example project repository for MATH 261A.
 
 ## External Resources
 
-**Example statement:** The final report and code were written by [your name], but the following resources were used for preliminary research:
+**Example statement:** The final report and code were written by [name]-hi, but the following resources were used for preliminary research:
 
 * LLM-based chatbots (ex. ChatGPT Edu)
 * Online forums (ex. Stack Overflow).
