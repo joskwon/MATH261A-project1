@@ -1,5 +1,6 @@
 # MATH261A-Project1-V1
 Author: Joshua Kwon
+
 Submission Date: 9/24/25
 
 The MATH261A-project1 folder contains 3 folders for analysis, data, and the paper as well as a README and project template file.

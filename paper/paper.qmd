@@ -3,7 +3,7 @@ title: "Offense Pass Completion as a Predictor of NFL Score Differential"
 subtitle: "A comparision betweeen "
 author: "Joshua Kwon"
 thanks: "Project repository available at: [https://github.com/peteragao/MATH261A-project-template](https://github.com/peteragao/MATH261A-project-template)."
-date: 9/24/25
+date: today
 date-format: long
 abstract: "Measuring the importance of an NFL team's offense by"
 format: pdf
@@ -16,15 +16,47 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+library(ggplot2)
+library(ggpubr)
+
+nfl <- read.csv("../data/nfl_clean.csv")
 ```
 
+
 # Introduction
+Increase in quarterback pay as % of salary cap
 
 # Data
 
 # Methods
 
+I fit the simple linear regression model $$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$ to understand the relationship between our predictor variable, offense completion percentage, and our outcome variable, score-differential. In this model, $X_i$ represents offense completion percentage of the $i$th observation and $Y_i$ represents the score-differential of the $i$th outcome.$\beta_0$ represents the intercept coefficient, what we expect score-differential to be when the offense has a completion percentage of 0%. $\beta_1$ represents the slope coefficient, what we expect the increase in score-differential will be for every percent increase in completion percentage. In this model, we assume the error term, $\varepsilon_i$ to be random with mean 0 and finite variance $\sigma^2$.
+
+I implemented this analysis using the R programming language [@R_language]
+
+
+
+
 # Results
 
+```{r fig-scatter}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: "Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values "
+ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
+  ggtitle("Score-differential vs offense completion percentage")+
+  xlab("offense completion percentage")+
+  ylab("score-differential")+
+  geom_point() + 
+  theme_pubr()
+```
+
+
+weakness: Quality of receiver. This regression analysis also ignores the quality of the team's defense. Sc
+
 # References
+
+https://www.cbssports.com/nfl/news/highest-paid-nfl-qbs-by-salary-cap-percentage-top-2024-bargains-long-term-steals-most-expensive-starters/
+
+https://www.nytimes.com/athletic/6576049/2025/08/28/nfl-qb-contracts-mahomes-allen-prescott-burrow/
