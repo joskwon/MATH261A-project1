@@ -39,8 +39,8 @@ ggplot(clean_data, aes(x = offense_completion_percentage, y = score_differential
   geom_abline(slope = coef(lm_fit)[2], 
               intercept = coef(lm_fit)[1], color = "blue") + 
   geom_point() +
-  xlab("nee lab")+
-  ylab("")+
+  xlab("Offense Pass Completion(%)")+
+  ylab("Score Differential")+
   ggtitle("Higher offense completion percentage leads to higher score differential",
           subtitle = "Data from NFL") +
   theme_pubr() 
