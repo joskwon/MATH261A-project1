@@ -1,6 +1,6 @@
 ---
 title: "Offense Pass Completion as a Predictor of NFL Score Differential"
-subtitle: "A comparision betweeen "
+subtitle: "Using offense pass completion to predict how successful an NFL team is at creating score advantages"
 author: "Joshua Kwon"
 thanks: "Project repository available at: [https://github.com/peteragao/MATH261A-project-template](https://github.com/peteragao/MATH261A-project-template)."
 date: today
@@ -18,7 +18,7 @@ bibliography: references.bib
 library(tidyverse)
 library(ggplot2)
 library(ggpubr)
-
+library(knitr)
 ```
 
 # Introduction
@@ -32,6 +32,10 @@ While intuitive, that a better offense should translate to a better chance at wi
 This paper serves to address intuition of 
 
 # Data
+
+The `nfl-team-statistics.csv` dataset provided by SCORE Sports Data Repository [@nfldata] contains statistics about the regular season performance for each NFL team from 1999 to 2022. The data was collected using the `nflreadr` package [@nflreadr]in R.
+
+The purpose of this paper is to observe the relationship between offense completion percentage and score-differential and as such these are the two relevant variables taken from the raw dataset provided by [@nfldata]. A total of 765 observations were recorded and analyzed in this paper.
 
 ```{r fig-nfl-scatter}
 #| echo: false
@@ -48,31 +52,67 @@ ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
   theme_pubr()
 ```
 
-The `nfl-team-statistics.csv` dataset provided by SCORE Sports Data Repository [@nfldata] contains statistics about the regular season performance for each NFL team from 1999 to 2022. The data was collected using the `nflreadr` package [@nflreadr]in R.
-
-The purpose of this paper is to observe the relationship between offense completion percentage and score-differential and as such these are the two variables taken from the raw dataset provided by [@nfldata].
+From @fig-nfl-scatter we can see a correlation between the increase in offense completion percentage and score-differential. This paper will quantify this correlation.
 
 ```{r clean-summary}
 #| echo: false
 #| warning: false
 #| message: false
-#| fig-cap: "Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values "
 
 for_summary <- nfl[c( "offense_completion_percentage", "score_differential")]
-summary(for_summary)
+clean_sum <- summary(for_summary)
+clean_sum
 ```
+
+The table and @fig-nfl-scatter above show a concentration of observations around 57% offense completion percentage with the 1st and 3rd quartile being within 3% of the mean. Additionally note the even distribution of score differential around the mean with the 1st and 3rd quartile 74 and 72 points from the mean respectively. Outliers are present in the data as seen in @fig-nfl-scatter.
 
 
 # Methods
 
-I fit the simple linear regression model $$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$ to understand the relationship between our predictor variable, offense completion percentage, and our outcome variable, score-differential. In this model, $X_i$ represents offense completion percentage of the $i$th observation and $Y_i$ represents the score-differential of the $i$th outcome.$\beta_0$ represents the intercept coefficient, what we expect score-differential to be when the offense has a completion percentage of 0%. $\beta_1$ represents the slope coefficient, what we expect the increase in score-differential will be for every percent increase in completion percentage. In this model, we assume the error term, $\varepsilon_i$ to be random with mean 0 and finite variance $\sigma^2$.
+This paper will fit the simple linear regression model $$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$ to understand the relationship between the predictor variable, offense completion percentage, and the outcome variable, score-differential. In this model, $X_i$ represents offense completion percentage of the $i$th observation and $Y_i$ represents the score-differential of the $i$th outcome.$\beta_0$ represents the intercept coefficient, what we expect score-differential to be when the offense has a completion percentage of 0%. $\beta_1$ represents the slope coefficient, what we expect the increase in score-differential will be for every percent increase in completion percentage. In this model, we assume the error term, $\varepsilon_i$ to be random with mean 0 and finite variance $\sigma^2$.
 
-I implemented this analysis using the R programming language [@R_language]
+The parameters, $beta_0$ and $beta_1$, can be estimated using the method of least squares which minimizes the sum of the squared deviations $Q = \sum_{i=1}^{n} = (Y_i-\beta_0-\beta_1X_i)^2$. This requires the assumption that the errors are uncorrelated and have equal variances with mean 0. From the OLS parameter estimates, the regression function can be estimated with $\hat{Y_i}=b_0+b_1X_i$. This gives the fitted values for case $i$. The fitted model created fits a linear line that best predicts score differential, from offense completion percentage.  
+
+In order to asses whether or not there is a linear association between $X$ and $Y$, this paper defines the null and alternative hypotheses as $H_0:\beta_1=0$ and $H_A:\beta_1\neq0$
+
+uses a two sided t-test to compare the null hypothesis $\beta_1=0$ with the two-sided alternative hypothesis $\beta_1 \neq0$.
+
+I implemented this analysis using the R programming language [@R_language].
 
 # Results
+
+Using the $lm()$ function in fits our model using the ordinary least squares method. This fits a linear line that best predicts the outcome variable, score differential, from the predictor variable, offense completion percentage.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+#regression with score differential as outcome and offense completion percentage as predictor
+lm_fit <- lm(score_differential ~ offense_completion_percentage, data = nfl)
+
+#visualization of regression
+lm_fit$coefficients
+```
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#visualization of regression
+lm_fit <- lm(score_differential ~ offense_completion_percentage, data = nfl)
+
+summary(lm_fit)
+```
+
 
 weakness: Quality of receiver. This regression analysis also ignores the quality of the team's defense. Sc
 
 Organize the quarterbacks by pay to see if paying more for quarterbacks improves score differential
+
+# Discussion
+
+
 
 # References
