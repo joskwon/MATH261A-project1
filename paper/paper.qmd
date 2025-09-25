@@ -19,31 +19,27 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 
-nfl <- read.csv("../data/nfl_clean.csv")
 ```
 
-
 # Introduction
-Increase in quarterback pay as % of salary cap
+
+Increase in quarterback pay as % of salary cap [@CBS]. Less room for defense or other positions. Is quarterback really that important?
+
+Since an NFL team wins by scoring more than their opponent at the end of a game, this paper uses score-differential as a proxy for how well a team did during a game. Thus a better 
+
+While intuitive, that a better offense should translate to a better chance at winning, games are won not only by proficient scoring, but by competent defending as well.
+
+This paper serves to address intuition of 
 
 # Data
 
-# Methods
-
-I fit the simple linear regression model $$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$ to understand the relationship between our predictor variable, offense completion percentage, and our outcome variable, score-differential. In this model, $X_i$ represents offense completion percentage of the $i$th observation and $Y_i$ represents the score-differential of the $i$th outcome.$\beta_0$ represents the intercept coefficient, what we expect score-differential to be when the offense has a completion percentage of 0%. $\beta_1$ represents the slope coefficient, what we expect the increase in score-differential will be for every percent increase in completion percentage. In this model, we assume the error term, $\varepsilon_i$ to be random with mean 0 and finite variance $\sigma^2$.
-
-I implemented this analysis using the R programming language [@R_language]
-
-
-
-
-# Results
-
-```{r fig-scatter}
+```{r fig-nfl-scatter}
 #| echo: false
 #| warning: false
 #| message: false
 #| fig-cap: "Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values "
+
+nfl <- read.csv("../data/nfl_clean.csv")
 ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
   ggtitle("Score-differential vs offense completion percentage")+
   xlab("offense completion percentage")+
@@ -52,11 +48,31 @@ ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
   theme_pubr()
 ```
 
+The `nfl-team-statistics.csv` dataset provided by SCORE Sports Data Repository [@nfldata] contains statistics about the regular season performance for each NFL team from 1999 to 2022. The data was collected using the `nflreadr` package [@nflreadr]in R.
+
+The purpose of this paper is to observe the relationship between offense completion percentage and score-differential and as such these are the two variables taken from the raw dataset provided by [@nfldata].
+
+```{r clean-summary}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: "Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values "
+
+for_summary <- nfl[c( "offense_completion_percentage", "score_differential")]
+summary(for_summary)
+```
+
+
+# Methods
+
+I fit the simple linear regression model $$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$ to understand the relationship between our predictor variable, offense completion percentage, and our outcome variable, score-differential. In this model, $X_i$ represents offense completion percentage of the $i$th observation and $Y_i$ represents the score-differential of the $i$th outcome.$\beta_0$ represents the intercept coefficient, what we expect score-differential to be when the offense has a completion percentage of 0%. $\beta_1$ represents the slope coefficient, what we expect the increase in score-differential will be for every percent increase in completion percentage. In this model, we assume the error term, $\varepsilon_i$ to be random with mean 0 and finite variance $\sigma^2$.
+
+I implemented this analysis using the R programming language [@R_language]
+
+# Results
 
 weakness: Quality of receiver. This regression analysis also ignores the quality of the team's defense. Sc
 
+Organize the quarterbacks by pay to see if paying more for quarterbacks improves score differential
+
 # References
-
-https://www.cbssports.com/nfl/news/highest-paid-nfl-qbs-by-salary-cap-percentage-top-2024-bargains-long-term-steals-most-expensive-starters/
-
-https://www.nytimes.com/athletic/6576049/2025/08/28/nfl-qb-contracts-mahomes-allen-prescott-burrow/
