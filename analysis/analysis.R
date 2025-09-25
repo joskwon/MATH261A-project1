@@ -14,7 +14,6 @@ clean_data <- raw_data[c("season", "offense_completion_percentage", "defense_com
 summary(clean_data)
 
 write.csv(clean_data, "data/nfl_clean.csv")
-
 #------------
 #visualization of data 
 
