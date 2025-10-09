@@ -12,6 +12,7 @@ sum(is.na(raw_data))
 
 clean_data <- raw_data[c("season", "offense_completion_percentage", "defense_completion_percentage", "points_scored","points_allowed", "score_differential")]
 summary(clean_data)
+clean_data$offense_completion_percentage <- clean_data$offense_completion_percentage * 100
 
 write.csv(clean_data, "data/nfl_clean.csv")
 #------------
