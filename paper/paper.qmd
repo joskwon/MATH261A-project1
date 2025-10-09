@@ -27,9 +27,9 @@ In recent years, there has been an increase in the quarterback's pay as percent 
 
 Since an NFL team wins by scoring more than their opponent at the end of a game, this paper uses score-differential as a proxy for how well a team did during a game. Thus a better high score-differential should represent a more winning team. Offense pass completion percent is also used as a measure of a quarterback's quality.
 
-Our analysis find evidence of a significant association between pass completion and score differential. However, only 24.68% of the variation in score differential can be explained by offense pass completion percentage. 
+Our analysis find evidence of a significant association between pass completion and score differential. However, only 24.68% of the variation in score differential can be explained by offense pass completion percentage.
 
-In this paper, we begin by introducing the reader to our data. We visualize important aspects of this data. We continue to discuss the methodology used in the analysis. We then present our findings and test the assumptions made in our regression model. Finally, we conclude with a discussion of our findings and the implications on whether the quality of an NFL team's quarterback translates into more wins for a team. 
+In this paper, we begin by introducing the reader to our data. We visualize important aspects of this data. We continue to discuss the methodology used in the analysis. We then present our findings and test the assumptions made in our regression model. Finally, we conclude with a discussion of our findings and the implications on whether the quality of an NFL team's quarterback translates into more wins for a team.
 
 # Data
 
@@ -123,7 +123,7 @@ ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
 #visualization of regression
 lm_fit <- lm(score_differential ~ offense_completion_percentage, data = nfl)
 
-summary(lm_fit)
+#summary(lm_fit)
 ```
 
 In order to assess whether or not there is a linear association between $X$ and $Y$, this paper defines the null and alternative hypotheses as $H_0:\beta_1=0$ and $H_A:\beta_1\neq0$ respectively.
@@ -147,8 +147,7 @@ lm_value <- c(p_value, r_squared)
 lm_value
 ```
 
-The P-value measures the probability of observing the data if our null hypothesis, that there is no relationship between pass completion and score differential, is true. We can use this to determine whether the relationship between these two variables is statistically significant.
-The R-squared value explains how much of the variability in score differential can be attributed to pass completion. We use this to establish how good of a fit our model is to the data. We discuss this further in the Discussions section.
+The P-value measures the probability of observing the data if our null hypothesis, that there is no relationship between pass completion and score differential, is true. We can use this to determine whether the relationship between these two variables is statistically significant. The R-squared value explains how much of the variability in score differential can be attributed to pass completion. We use this to establish how good of a fit our model is to the data. We discuss this further in the Discussions section.
 
 Analysis below reaffirms the assumptions made in our linear regression model.
 
@@ -168,6 +167,7 @@ abline(h=0)
 
 The @fig-residual figure shows random scatter of residuals around 0, which indicates that the residuals have a constant variance. From the pattern of residuals we can conclude that our assumptions of linearity and homoscedasticity hold true in our linear regression model.
 
+
 ```{r fig-QQ}
 #| echo: false
 #| message: false
@@ -183,8 +183,7 @@ The quantile-quantile (Q-Q) plot shown in @fig-QQ checks whether our residuals f
 
 # Discussion
 
-The p-value found was $6.343907e-49 < 0.05$, which is far lower than our established significance level of 0.05. This allows us to reject the null hypothesis and conclude that there is strong statistical evidence of a linear association between offense pass completion percentage and score differential. 
-Despite this, our $R^2$ value of 0.2468 indicates that only 24.68% of the variation in score differential can be explained by offense pass completion percentage. So while pass completion is strongly associated with score differential, pass completion alone cannot fully explain the difference in score differential. Other factors, such as the team's defense and the opponent's strength, may play a greater role in determining the outcome of an NFL game.
+The p-value found was $6.343907e-49 < 0.05$, which is far lower than our established significance level of 0.05. This allows us to reject the null hypothesis and conclude that there is strong statistical evidence of a linear association between offense pass completion percentage and score differential. Despite this, our $R^2$ value of 0.2468 indicates that only 24.68% of the variation in score differential can be explained by offense pass completion percentage. So while pass completion is strongly associated with score differential, pass completion alone cannot fully explain the difference in score differential. Other factors, such as the team's defense and the opponent's strength, may play a greater role in determining the outcome of an NFL game.
 
 While the regression itself shows a strong association between the two variables, several assumptions made in this analysis warrant caution. For example, we use pass completion as a proxy for a quarterback's performance. This, however, neglects the role of the receiver and their ability to influence pass completion. Additionally, score differential reflects the performance of the entire team, including the defense, which may obscure the true influence of the quarterback on game outcomes.
 
