@@ -5,11 +5,8 @@ author: "Joshua Kwon"
 thanks: "Project repository available at: [https://github.com/peteragao/MATH261A-project-template](https://github.com/peteragao/MATH261A-project-template)."
 date: today
 date-format: long
-abstract: "This paper examines whether the quality of an NFL team's quarterback translates into more wins for a team. We find strong statistical evidence of a linear association between offensive pass completion percentage and score differential. However, only 24.68% of the variation in score differential is explained by pass completion. While pass completion is significantly associated with score differential, it alone does not fully capture differences in score outcomes."
-format:
-  pdf:
-    keep-tex: true
-    fig_crop: false
+abstract: "This paper examines whether the quality of an NFL team's quarterback translates into more wins for a team. We find strong statistical evidence of a linear association between offensive pass completion percentage and score-differential. However, only 24.68% of the variation in score differential is explained by pass completion. While pass completion is significantly associated with score-differential, it alone does not fully capture differences in score outcomes. Limitations of this paper include the exclusion of other variables such as the rest of the team's performance."
+format: pdf
 bibliography: references.bib
 ---
 
@@ -22,36 +19,40 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(knitr)
-library(gt)
+library(dplyr)
 
 nfl <- read.csv("../data/nfl_clean.csv")
 ```
 
 # Introduction
 
-The National Football League, NFL for short, is the most popular sport in America with 41% of U.S. adults claiming football as their "favorite sport" [@Gallup] according to a Gallup poll. This popularity has driven an increase in lucrative media deals for the league, which in return has driven an increase in player salary demands. To prevent wealthier teams from spending their way to dominance and to maintain competition in the league, policies have been enacted to ensure a balanced competitive field, such as the draft and salary cap. The salary cap, "calculated annually based on a collectively bargained formula tied to league revenues" according to [@ESPN], limits the amount of money an NFL team can spend in a given year.  
+The National Football League, NFL for short, is the most popular sport in America, with 41% of U.S. adults claiming football as their "favorite sport" according to a @Gallup poll. This popularity has driven an increase in lucrative media deals for the league, which in turn has driven an increase in player salary demands. To prevent wealthier teams from spending their way to dominance and to maintain competition in the league, policies have been enacted to ensure a balanced competitive field, such as the draft and salary cap. The salary cap, "calculated annually based on a collectively bargained formula tied to league revenues"[@ESPN], limits the amount of money an NFL team can spend in a given year. This is particularly interesting due to its implications for team structure.
 
-This is interesting in particular due to its implications on team structure. 
+Despite the limit on how much each team can spend in a given year, in recent years, there has been a dramatic increase in the quarterback's pay as a percentage of the salary cap. Over a 5 year span, the number of quarterbacks taking "at least 10% of the cap"[@NYT] increased from 7 to 23. This leaves less room on a team's salary cap for the rest of the team. Additionally, "there are 11 quarterbacks that make more in annual salary than the highest-paid non-quarterback"[@SI]. Since the "highest-paid quarterbacks make over double what many of the highest-paid running backs, linebackers, safeties, offensive linemen, cornerbacks and tight ends [earn] each year"[@SI], crucial positions on the defense, and perhaps even on the offense may be left neglected. Is the quarterback really that important? This paper tries to quantify whether a better quarterback can deliver a greater number of wins using score-differential and pass completion rate.
 
-In recent years, there has been an increase in the quarterback's pay as percent of salary cap. In a 5 year span, the number of quarterbacks taking "at least 10% of the cap"[@NYT] increased from 7 to 23. This leaves less room on a team's salary cap for the rest of the team. Crucial positions on the defense, and perhaps even on the offense may be left neglected. Is quarterback really that important? This paper tries to quantify whether a better quarterback can deliver a greater amount of wins using score-differential and pass completion rate.
+Since an NFL team wins by scoring more than their opponent at the end of a game, this paper uses score-differential as a proxy for how well a team performed during a game. Thus a higher score-differential should represent a more winning team. Since every pass starts with the quarterback, pass completion percent is used as a measure of a quarterback's quality.
 
-Since an NFL team wins by scoring more than their opponent at the end of a game, this paper uses score-differential as a proxy for how well a team did during a game. Thus a better high score-differential should represent a more winning team. Offense pass completion percent is also used as a measure of a quarterback's quality.
+Our use of score-differential and offence pass completion percent is not perfect however. Score differential reflects the performance of the entire team, including the defense, which may obscure the true influence of the quarterback on game outcomes. Our use of pass completion as a proxy for a quarterback's performance also neglects the role of the receiver and their ability to influence pass completion. Additionally, lineman performance may affect how easily a quarterback is able to perform.
 
 Our analysis finds evidence of a significant association between pass completion and score differential. However, only 24.68% of the variation in score differential can be explained by offensive pass completion percentage.
 
-In this paper, we begin by introducing the reader to our data. We visualize important aspects of this data. We continue to discuss the methodology used in the analysis. We then present our findings and test the assumptions made in our regression model. Finally, we conclude with a discussion of our findings and the implications on whether the quality of an NFL team's quarterback translates into more wins for a team.
+In this paper, we begin by introducing the reader to our data. We visualize important aspects of this data, then discuss the methodology used in the analysis. We then present our findings and test the assumptions made in our regression model. Finally, we conclude with a discussion of our findings and the implications on whether the quality of an NFL team's quarterback translates into more wins for the team.
 
 # Data
 
-The `nfl-team-statistics.csv` dataset provided by SCORE Sports Data Repository [@nfldata] contains statistics about the regular season performance for each NFL team from 1999 to 2022. The data was collected using the `nflreadr` package [@nflreadr]in R.
+The `nfl-team-statistics.csv` dataset provided by SCORE Sports Data Repository [@nfldata] contains statistics about the regular season performance for each NFL team for the years 1999 to 2022. Play-by-play data dates back to 1999 at the earliest and the latest year where data was collected was 2022. A total of 765 observations were recorded and analyzed in this paper. The data was collected using the `nflreadr` package [@nflreadr]in R.
 
-The purpose of this paper is to observe the relationship between offensive pass completion percentage and score-differential and as such these are the two relevant variables taken from the raw dataset provided by [@nfldata]. A total of 765 observations were recorded and analyzed in this paper.
+The purpose of this paper is to observe the relationship between offensive pass completion percentage and score-differential and as such these are the two relevant variables taken from the raw dataset provided by @nfldata. Score-differential is calculated by taking the total number of points scored by the team and subtracting the total number of points allowed by the team. Wins result in a positive number and losses result in a negative number. Pass completion percent is calculated as the number of successful passes made divided by the total number of passes attempted. A pass is considered successful when a quarterback throws the ball to a receive who catches it.
+
+We make some key assumptions for our use of pass completion and score-differential. For the purpose of this paper we assume that pass completion is dependent entirely on the quarterback and that no one team has an advantage due to their receivers alone. We also assume that all points are scored from passes. Points can be scored without utilizing the quarterback, but since the majority of points are scored through the pass completions, we ignore these sources of points. If any of our assumptions fail, we expect our analysis to change.
+
+There are also limitations with our data. The data we have on pass completion is for each team. As a result, we cannot distinguish between quarterbacks on the same team. If a quarterback is changed in the middle of the season, we expect the team's score-differential to change, but we do not have the means to measure that.
 
 ```{r fig-nfl-scatter}
 #| echo: false
-#| warning: false
 #| message: false
-#| fig-cap: "Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values "
+#| warning: false
+#| fig-cap: Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values
 
 ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
   ggtitle("Score-differential vs offense completion percentage")+
@@ -69,19 +70,33 @@ From @fig-nfl-scatter we can see a correlation between the increase in offense c
 #| message: false
 
 for_summary <- nfl[c( "offense_completion_percentage", "score_differential")]
-clean_sum <- summary(for_summary)
-clean_sum
+#clean_sum <- summary(for_summary)
+
+clean_sum <- for_summary %>%
+  summarise(across(everything(), list(
+    Min = ~min(.),
+    `1st Qu.` = ~quantile(., 0.25),
+    Median = ~median(.),
+    Mean = ~mean(.),
+    `3rd Qu.` = ~quantile(., 0.75),
+    Max = ~max(.)
+  ), .names = "{.fn}_{.col}")) %>%
+  pivot_longer(everything(), names_to = c("Statistic", "Variable"), names_sep = "_") %>%
+  pivot_wider(names_from = Statistic, values_from = value)
+
+kable(clean_sum, caption = "Summary Statistics of Offenseive Completion Percentage and Score-Differential",
+      digits = 2)
 ```
 
-The table and @fig-nfl-scatter above shows that on average, an NFL quarterback will complete 57% of their pass attempts. We also note the concentration around this percentage as only about 3% of pass completion separates the 1st and 3rd quartile from the mean. Additionally note the even distribution of score differential around the mean with the 1st and 3rd quartile 74 and 72 points from the mean respectively. Outliers are present in the data as seen in @fig-nfl-scatter.
+The table and @fig-nfl-scatter above shows that on average, an NFL team will complete 57% of their pass attempts. We also note the concentration around this percentage as only about 3% of pass completion separates the 1st and 3rd quartile from the mean. Additionally note the even distribution of score differential around the mean with the 1st and 3rd quartile 74 and 72 points from the mean respectively. Outliers are present in the data as seen in @fig-nfl-scatter.
 
 # Methods
 
-This paper will fit the simple linear regression model $$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$ to understand the relationship between the predictor variable, offense completion percentage, and the outcome variable, score-differential. In this model, $X_i$ represents offense completion percentage of the $i$th observation and $Y_i$ represents the score-differential of the $i$th outcome.$\beta_0$ represents the intercept coefficient, what we expect score-differential to be when the offense has a completion percentage of $0%$. $\beta_1$ represents the slope coefficient, what we expect the increase in score-differential will be for every percent increase in completion percentage. In this model, we assume the error term, $\varepsilon_i$ to be random with mean 0 and finite variance $\sigma^2$.
+This paper will fit the simple linear regression model $$Y_i = \beta_0 +\beta_1 X_i + \varepsilon_i$$ to understand the relationship between the predictor variable, offense completion percentage, and the outcome variable, score-differential. In this model, $X_i$ represents the offense completion percentage of the $i$th observation and $Y_i$ represents the score-differential of the $i$th outcome.$\beta_0$ represents the intercept coefficient, which indicates the expected score-differential when the offense has a completion percentage of $0%$. $\beta_1$ represents the slope coefficient, which indicates the expected increase in score-differential for every one percent increase in completion percentage. In this model, we assume the error term, $\varepsilon_i$ to be random with mean 0 and finite variance $\sigma^2$.
 
 The parameters, $\beta_0$ and $\beta_1$, can be estimated using the method of least squares which minimizes the sum of the squared deviations $Q = \sum_{i=1}^{n} = (Y_i-\beta_0-\beta_1X_i)^2$. This requires the assumption that the errors are uncorrelated and have equal variances with mean 0. From the OLS parameter estimates, the regression function can be estimated with $\hat{Y_i}=b_0+b_1X_i$. This gives the fitted values for case $i$. The fitted model created fits a linear line that best predicts score differential, from offense completion percentage.
 
-With our fitted model, we can perform a hypothesis test to determine whether there is a statistically significant association between our predictor, pass completion percentage, and outcome, score differential. We define the null hypothesis as $H_0:\beta_1=0$, which states that there is no linear relationship between pass completion and score differential. We define the alternative hypothesis as $H_A:\beta_1\neq0$, which states that there is a linear relationship between pass completion and score differential. We use a 5% significance level.
+With our fitted model, we can perform a hypothesis test to determine whether there is a statistically significant association between our predictor, pass completion percentage, and outcome, score differential. We define the null hypothesis as $H_0:\beta_1=0$, which states that there is no linear relationship between pass completion and score differential. We define the alternative hypothesis as $H_A:\beta_1\neq0$, which states that there is a linear relationship between pass completion and score differential. For our hypothesis test, we assume that the error terms, $\varepsilon_i$, are independent, normally distributed with mean 0, and have constant variance $\sigma^2$. Additionally, we assume that the relationship between pass completion percentage and score differential is linear. We use a 5% significance level to evaluate the test.
 
 We also test how well our regression model explains the variability in score differential.
 
@@ -105,12 +120,11 @@ para <- lm_fit$coefficients
 names(para)[names(para) == "(Intercept)"] <- "B0"
 names(para)[names(para) == "offense_completion_percentage"] <- "B1"
 
-para_df <- data.frame(
-  Term = names(para),
-  Estimate = round(para, 3)
+coef_table <- tibble(
+  Parameter = names(para),
+  Estimate = as.numeric(para)
 )
-
-para_df |> gt()
+kable(coef_table, caption = "Regression coefficients for predicted score differential.")
 ```
 
 $\beta_0$ represents the intercept coefficient and has a value of $-618.03$. Thus, score-differential can be predicted to be $-618.03$ when the offense has a pass completion percentage of 0%. $\beta_1$ represents the slope coefficient and has a value of $10.7814$. When pass completion percentage increases by a percent, we should expect an average increase in score differential of $10.7814$ .
@@ -122,9 +136,7 @@ We now return to the scatter plot from the beginning of the paper to better illu
 #| message: false
 #| warning: false
 #| fig-pos: "H"
-#| fig-width: 8
-#| fig-height: 6
-#| fig-cap: Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values with fitted regression line included
+#| fig-cap: "Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values with fitted regression line included"
 
 ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
   geom_abline(slope = coef(lm_fit)[2], 
@@ -137,8 +149,7 @@ ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
   theme_pubr()
 ```
 
-
-We can use a two sided t-test to test the null hypothesis, calculated by $t^*=b_1/{\hat{se}(b_1)}$, but the $lm()$ gives a P-value we can use. We use this to test at a 5% significant level and is shown below.
+We can use a two sided t-test to test the null hypothesis, calculated by $t^*=b_1/{\hat{se}(b_1)}$, where $b_1$ is the estimated slope and $\hat{se}(b_1)$ is its standard error. However, the $lm()$ gives a P-value we can use. We use this to test at a 5% significant level. For this test to be valid, we assume that the relationship between pass completion percentage and score-differential is linear, the residuals are independent, the residuals are approximately normally distributed, and the variance of residuals is constant.
 
 ```{r}
 #| echo: false
@@ -152,37 +163,41 @@ r_squared <- summary(lm_fit)$r.squared
 names(r_squared) <- "R squared"
 
 lm_value <- c(p_value, r_squared)
-lm_value
+
+lm_table <- tibble(
+  Metric = names(lm_value),
+  Value = format(as.numeric(lm_value), scientific = TRUE, digits = 3)
+)
+kable(lm_table, caption = "Model summary statistics for predicted score differential")
 ```
 
 The P-value measures the probability of observing the data if our null hypothesis, that there is no relationship between pass completion and score differential, is true. We can use this to determine whether the relationship between these two variables is statistically significant. The R-squared value explains how much of the variability in score differential can be attributed to pass completion. We use this to establish how good of a fit our model is to the data. We discuss this further in the Discussions section.
 
-Analysis below reaffirms the assumptions made in our linear regression model.
+Analysis below reaffirms the assumptions made in our linear regression model and the tests we performed.
 
 ```{r fig-residual}
 #| echo: false
 #| message: false
 #| warning: false
 #| fig-pos: "H"
-#| fig-cap: A residual vs predictor plot for NFL model using offense pass completion as a predictor.
+#| fig-cap: A residual plot for score differential predicted by offense pass completion.
 
 plot(nfl$offense_completion_percentage, resid(lm_fit),
-     main = "Residual vs. Predictor Plot for NFL Model",
+     main = "Residual vs. Completion Percentage",
      xlab = "Offense completion percentage",
-     ylab = "Residuals",
+     ylab = "Residuals"
 )
 abline(h=0)
 ```
 
-The @fig-residual figure shows random scatter of residuals around 0, which indicates that the residuals have a constant variance. From the pattern of residuals we can conclude that our assumptions of linearity and homoscedasticity hold true in our linear regression model.
-
+The residual plot in @fig-residual displays the residuals of the model against the fitted values. The residuals are scattered around 0, with no pattern, which indicates that the assumptions of linearity and homoscedasticity are satisfied.
 
 ```{r fig-QQ}
 #| echo: false
 #| message: false
 #| warning: false
 #| fig-pos: "H"
-#| fig-cap: Residuals vs. Offense Completion Percentage.
+#| fig-cap: "Residuals vs. Offense Completion Percentage."
 
 qqnorm(resid(lm_fit),
        main = "Q-Q Plot of Residuals")
@@ -192,13 +207,12 @@ qqline(resid(lm_fit), col = "blue")
 
 The quantile-quantile (Q-Q) plot shown in @fig-QQ checks whether our residuals from the regression model are normally distributed. While most of the points align with the fitted line, there is slight deviation at the tails of the regression line. These deviations are small enough that we maintain our assumption of normally distributed residuals.
 
-
 # Discussion
 
 The p-value found was $6.343907e-49 < 0.05$, which is far lower than our established significance level of 0.05. This allows us to reject the null hypothesis and conclude that there is strong statistical evidence of a linear association between offense pass completion percentage and score differential. Despite this, our $R^2$ value of 0.2468 indicates that only 24.68% of the variation in score differential can be explained by offense pass completion percentage. So while pass completion is strongly associated with score differential, pass completion alone cannot fully explain the difference in score differential. Other factors, such as the team's defense and the opponent's strength, may play a greater role in determining the outcome of an NFL game.
 
 While the regression itself shows a strong association between the two variables, several assumptions made in this analysis warrant caution. For example, we use pass completion as a proxy for a quarterback's performance. This, however, neglects the role of the receiver and their ability to influence pass completion. Additionally, score differential reflects the performance of the entire team, including the defense, which may obscure the true influence of the quarterback on game outcomes.
 
-Future analyses of this topic should include discussions of the interaction between defensive performance and score differential as well as include measures of the receiver's influence on pass completion and games outcome.
+Future analyses of this topic should include discussions of the interaction between defensive performance and score differential as well as include measures of the receiver's influence on pass completion and games outcome. If a team's quarterback changes within the season, future estimates should separate the score-differentials for each quarterback.
 
 # References
