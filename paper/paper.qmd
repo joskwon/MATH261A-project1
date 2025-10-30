@@ -144,7 +144,7 @@ ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
   geom_point() +
   xlab("Offense Pass Completion")+
   ylab("Score Differential")+
-  ggtitle("Higher offense completion percentage leads to higher score differential",
+  ggtitle("Higher pass completion leads to higher score differential",
           subtitle = "Data from NFL") +
   theme_pubr()
 ```
