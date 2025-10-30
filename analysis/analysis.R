@@ -60,4 +60,3 @@ qqnorm(resid(lm_fit),
        main = "Q-Q Plot of Residuals")
 qqline(resid(lm_fit), col = "blue")
 
-#note the heavy tails

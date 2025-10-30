@@ -6,7 +6,10 @@ thanks: "Project repository available at: [https://github.com/peteragao/MATH261A
 date: today
 date-format: long
 abstract: "This paper examines whether the quality of an NFL team's quarterback translates into more wins for a team. We find strong statistical evidence of a linear association between offensive pass completion percentage and score differential. However, only 24.68% of the variation in score differential is explained by pass completion. While pass completion is significantly associated with score differential, it alone does not fully capture differences in score outcomes."
-format: pdf
+format:
+  pdf:
+    keep-tex: true
+    fig_crop: false
 bibliography: references.bib
 ---
 
@@ -19,9 +22,16 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(knitr)
+library(gt)
+
+nfl <- read.csv("../data/nfl_clean.csv")
 ```
 
 # Introduction
+
+The National Football League, NFL for short, is the most popular sport in America with 41% of U.S. adults claiming football as their "favorite sport" [@Gallup] according to a Gallup poll. This popularity has driven an increase in lucrative media deals for the league, which in return has driven an increase in player salary demands. To prevent wealthier teams from spending their way to dominance and to maintain competition in the league, policies have been enacted to ensure a balanced competitive field, such as the draft and salary cap. The salary cap, "calculated annually based on a collectively bargained formula tied to league revenues" according to [@ESPN], limits the amount of money an NFL team can spend in a given year.  
+
+This is interesting in particular due to its implications on team structure. 
 
 In recent years, there has been an increase in the quarterback's pay as percent of salary cap. In a 5 year span, the number of quarterbacks taking "at least 10% of the cap"[@NYT] increased from 7 to 23. This leaves less room on a team's salary cap for the rest of the team. Crucial positions on the defense, and perhaps even on the offense may be left neglected. Is quarterback really that important? This paper tries to quantify whether a better quarterback can deliver a greater amount of wins using score-differential and pass completion rate.
 
@@ -43,7 +53,6 @@ The purpose of this paper is to observe the relationship between offensive pass 
 #| message: false
 #| fig-cap: "Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values "
 
-nfl <- read.csv("../data/nfl_clean.csv")
 ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
   ggtitle("Score-differential vs offense completion percentage")+
   xlab("offense completion percentage")+
@@ -88,13 +97,20 @@ Using the $lm()$ function in fits our model using the ordinary least squares met
 #| echo: false
 #| warning: false
 #| message: false
+#| table-caption: "Regression coefficients for predicted score differential."
 
 lm_fit <- lm(score_differential ~ offense_completion_percentage, data = nfl)
 
 para <- lm_fit$coefficients
 names(para)[names(para) == "(Intercept)"] <- "B0"
 names(para)[names(para) == "offense_completion_percentage"] <- "B1"
-para
+
+para_df <- data.frame(
+  Term = names(para),
+  Estimate = round(para, 3)
+)
+
+para_df |> gt()
 ```
 
 $\beta_0$ represents the intercept coefficient and has a value of $-618.03$. Thus, score-differential can be predicted to be $-618.03$ when the offense has a pass completion percentage of 0%. $\beta_1$ represents the slope coefficient and has a value of $10.7814$. When pass completion percentage increases by a percent, we should expect an average increase in score differential of $10.7814$ .
@@ -106,6 +122,8 @@ We now return to the scatter plot from the beginning of the paper to better illu
 #| message: false
 #| warning: false
 #| fig-pos: "H"
+#| fig-width: 8
+#| fig-height: 6
 #| fig-cap: Scatter plot with offense completion percentage as the predictor values and score-differential as the outcome values with fitted regression line included
 
 ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
@@ -116,7 +134,7 @@ ggplot(nfl, aes(x = offense_completion_percentage, y = score_differential)) +
   ylab("Score Differential")+
   ggtitle("Higher offense completion percentage leads to higher score differential",
           subtitle = "Data from NFL") +
-  theme_pubr() 
+  theme_pubr()
 ```
 
 
@@ -126,7 +144,6 @@ We can use a two sided t-test to test the null hypothesis, calculated by $t^*=b_
 #| echo: false
 #| warning: false
 #| message: false
-lm_fit <- lm(score_differential ~ offense_completion_percentage, data = nfl)
 
 p_value <- summary(lm_fit)$coefficients[2,4]
 names(p_value) <- "P-value"
@@ -165,7 +182,7 @@ The @fig-residual figure shows random scatter of residuals around 0, which indic
 #| message: false
 #| warning: false
 #| fig-pos: "H"
-#| fig-cap: A residual vs predictor plot for NFL model using offense pass completion as a predictor.
+#| fig-cap: Residuals vs. Offense Completion Percentage.
 
 qqnorm(resid(lm_fit),
        main = "Q-Q Plot of Residuals")
